@@ -23,9 +23,10 @@ class PitchListRepo:
         pitch_list = Message.query.all()
         return pitch_list
 
-    def create_pitch_list(self, message_type, timestamp):
+    def create_pitch_list(self, records):
         try:
-            pitch_data = [Message(record["timestamp"], record["message_type"]) for record in records]
+            pitch_data = [Message(record["message_type_id"], record["timestamp"]) for record in records]
+
             db.session.bulk_save_objects(pitch_data)
             logger.debug(f"CREATE PITCH REPO: COMMITING TO DB")
             db.session.commit()

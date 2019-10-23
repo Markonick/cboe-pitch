@@ -43,7 +43,8 @@ def upload_pitch_data(file_path):
 
 
 def parse_data_file(data):
-    return [parse_row(row) for row in data.iterrrows()]
+    # return [parse_row(row) for row in data.iterrrows()]
+    return data.apply(lambda x: parse_row(x))
 
 
 def parse_row(row):

@@ -37,14 +37,18 @@ class PitchList(Resource):
     def post(self):
         # Read body fields
         body = request.get_json()
-        timestamp = body.get("timestamp")
-        message_type = body.get("message_type")
+        records = body.get("records")
+        # message_type = body.get("message_type")
+        logger.debug(f"RECORDS: {records}")
 
         # Instantiate service from factory
         svc = create_pitch_list_service()
 
         # Create pitch list
-        result = svc.create_pitch_list(timestamp, message_type)
+        data = [{"timestamp": record["timestamp"], "message_type_id": record["message_type_id"]} for record in records]
+
+        result = svc.create_pitch_list(data)
+        logger.debug(f"{result}")
 
         if result:
             response = {"status": 201, "message": f"Uploaded pitch data successfully!"}
