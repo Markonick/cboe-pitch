@@ -23,7 +23,7 @@ celery = Celery(broker=broker, backend=backend)
 # Add periodic tasks to scheduler
 @celery.on_after_configure.connect
 def add_periodic_task(sender, **kwargs):
-    sender.add_periodic_task(30.0, upload_pitch_data, name="Create new pitch data every 30 sec, if available")
+    sender.add_periodic_task(5.0, upload_pitch_data("input/"), name="Create new pitch data every 30 sec, if available")
 
 
 @celery.task
