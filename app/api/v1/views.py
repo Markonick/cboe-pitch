@@ -27,7 +27,7 @@ class PitchList(Resource):
         body = []
 
         for pitch_record in pitch_list:
-            record = {"message_type": pitch_record.message_type, "timestamp": pitch_record.timestamp}
+            record = {"message_type_id": pitch_record.message_type_id, "timestamp": pitch_record.timestamp}
             body.append(record)
 
         response = {"status": 200, "message": f"Found {len(pitch_list)} pitch records!", "body": body}
