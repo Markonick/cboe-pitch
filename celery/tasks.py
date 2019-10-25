@@ -8,6 +8,7 @@ import logging
 import glob
 import pandas as pd
 from celery import Celery
+import pathlib
 
 # Setup logging
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s")
@@ -17,38 +18,60 @@ logger = logging.getLogger("CELERY-TASKS")
 endpoint = os.environ.get("PITCH_ENDPOINT")
 broker = os.environ.get("CELERY_BROKER_URL")
 backend = os.environ.get("CELERY_RESULT_BACKEND")
+datafile = os.environ.get("DATA_FILE")
+basedir = os.path.abspath(os.path.dirname(__file__))
+datafile_path = os.path.join(basedir, datafile)
 
 celery = Celery(broker=broker, backend=backend)
 
 # Add periodic tasks to scheduler
 @celery.on_after_configure.connect
 def add_periodic_task(sender, **kwargs):
-    sender.add_periodic_task(5.0, upload_pitch_data("input"), name="Create new pitch data every 30 sec, if available")
+    sender.add_periodic_task(5.0, upload_pitch_data, name="Create new pitch data every 30 sec, if available")
 
 
 @celery.task
-def upload_pitch_data(file_path):
-    logger.info(f"UPLOAD NEW PITCH DATA - Before call!!!! ENDPOINT: {endpoint}")
+def upload_pitch_data():
+    # logger.info(f"UPLOAD NEW PITCH DATA - Before call!!!! ENDPOINT: {endpoint}")
 
     # Check if file in data file is in expected input path location
-    for pitch_data_file in glob.glob(file_path):
-        raw_pitch_data = pd.read_csv(pitch_data_file, sep=" ", header=None)
-        logger.debug(f"raw_pitch_data: {raw_pitch_data}")
-        parsed_pitch_data = parse_data_file(raw_pitch_data)
-        os.remove(pitch_data_file)
+    path = pathlib.Path(datafile_path)
+    if not path.exists():
+        logger.debug(f"DATA FILE DOES NOT EXIST!!")
+        return
 
+    chunksize = 1000
+    for chunk in pd.read_csv(datafile_path, chunksize=chunksize, delim_whitespace=True, header=None, names=["First", "Second"]):
+        parsed_pitch_data_df = parse_data_file(chunk)
         headers = {"Content-Type": "application/json"}
-        data_json = json.dumps(parsed_pitch_data)
-        logger.debug(f"DATA: {parsed_pitch_data}")
-        response = requests.post(endpoint, data=data_json, headers=headers)
+        body = parsed_pitch_data_df.tolist()
 
+        data_json = json.dumps(body)
+        response = requests.post(endpoint, data=data_json, headers=headers)
+        logger.debug(f"RESPONSE: ===============================")
+        logger.debug(f"RESPONSE: {response}")
+
+    # Remove file once finished
+    os.remove(datafile_path)
 
 def parse_data_file(data):
     # return [parse_row(row) for row in data.iterrrows()]
-    return data.apply(lambda x: parse_row(x))
+    return data.apply(lambda x: parse_row(x['First']), axis=1)
 
+def map_message_type_to_message_type_id(func):
+    symbols = ['s', 'A', 'd', 'E', 'X', 'P', 'r', 'B', 'H', 'I', 'J']
+    ids = list(range(0, 11))
+    lut = dict(zip(symbols, ids))
+    def wrapped_func(input):
+        return lut[input]
+    
+    return wrapped_func
 
+# @map_message_type_to_message_type_id
 def parse_row(row):
-    parsed_row = {"timestamp": row[0:9], "message_type": row[8:9]}
+    symbols = ['s', 'A', 'd', 'E', 'X', 'P', 'r', 'B', 'H', 'I', 'J']
+    ids = list(range(0, 11))
+    lut = dict(zip(symbols, ids))
+    return {"timestamp": row[1:9], "message_type_id": lut[row[9:10]]}
 
-    return parsed_row
+

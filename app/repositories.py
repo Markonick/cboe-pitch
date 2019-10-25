@@ -21,37 +21,30 @@ class PitchListRepo:
         pass
 
     def get_pitch_list(self):
-        pitch_list = Message.query.join(MessageType.messages).values(Message.timestamp, Message.id, MessageType.description)
+        pitch_list = Message.query.join(MessageType.messages).values(
+            Message.timestamp, Message.id, MessageType.description
+        )
 
         result = []
         for timestamp, message_id, description in pitch_list:
 
-            result.append({
-                "message_id": message_id, 
-                "description": description, 
-                "timestamp": timestamp,
-            })
+            result.append({"message_id": message_id, "description": description, "timestamp": timestamp})
 
         return result
 
     def get_message_type_counts(self):
 
-        t = db.session.query(
-            Message.message_type_id,
-            func.count(Message.message_type_id).label('count'),
-        ).group_by(Message.message_type_id).subquery('t')
+        t = db.session.query(MessageType).join(MessageType.messages).subquery("t")
 
-        results = db.session.query(MessageType).join(MessageType.messages).values(MessageType.id, MessageType.description, t.c.count)
+        results = db.session.query(t.c.description, func.count(t.c.description).label("count")).group_by(
+            t.c.description
+        )
 
         result = []
 
-        for message_type_id, description, count in set(results):
+        for description, count in set(results):
 
-            result.append({
-                "message_type": description,
-                "message_type_id": message_type_id, 
-                "count": count, 
-            })
+            result.append({"message_type": description, "count": count})
 
         return result
 

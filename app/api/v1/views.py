@@ -27,7 +27,7 @@ class PitchList(Resource):
 
         counts = svc.get_message_type_counts()
 
-        body = {"messages": pitch_list, "counts": counts}
+        body = {"messages": pitch_list, "counts": sorted(counts, key=lambda x: x['count'], reverse=True)}
         response = {"status": 200, "message": f"Found {len(pitch_list)} pitch records!", "body": body}
 
         return jsonify(response)
@@ -35,15 +35,15 @@ class PitchList(Resource):
     def post(self):
         # Read body fields
         body = request.get_json()
-        records = body.get("records")
+        # records = body["records"]
         # message_type = body.get("message_type")
-        logger.debug(f"RECORDS: {records}")
+        # logger.debug(f"RECORDS: {body}")
 
         # Instantiate service from factory
         svc = create_pitch_list_service()
 
         # Create pitch list
-        data = [{"timestamp": record["timestamp"], "message_type_id": record["message_type_id"]} for record in records]
+        data = [{"timestamp": record["timestamp"], "message_type_id": record["message_type_id"]} for record in body]
 
         result = svc.create_pitch_list(data)
         logger.debug(f"{result}")
