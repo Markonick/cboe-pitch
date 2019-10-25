@@ -32,8 +32,15 @@ def add_periodic_task(sender, **kwargs):
 
 @celery.task
 def upload_pitch_data():
-    # logger.info(f"UPLOAD NEW PITCH DATA - Before call!!!! ENDPOINT: {endpoint}")
-
+    """
+    START RUNNING
+    =============
+    sudo rm -rf migrations/
+    docker exec -it backend flask db init
+    docker exec -it backend flask db migrate
+    docker exec -it backend flask db upgrade
+    cp pitch_data.txt celery/
+    """
     # Check if file in data file is in expected input path location
     path = pathlib.Path(datafile_path)
     if not path.exists():
@@ -41,7 +48,9 @@ def upload_pitch_data():
         return
 
     chunksize = 1000
-    for chunk in pd.read_csv(datafile_path, chunksize=chunksize, delim_whitespace=True, header=None, names=["First", "Second"]):
+    for chunk in pd.read_csv(
+        datafile_path, chunksize=chunksize, delim_whitespace=True, header=None, names=["First", "Second"]
+    ):
         parsed_pitch_data_df = parse_data_file(chunk)
         headers = {"Content-Type": "application/json"}
         body = parsed_pitch_data_df.tolist()
@@ -54,24 +63,27 @@ def upload_pitch_data():
     # Remove file once finished
     os.remove(datafile_path)
 
+
 def parse_data_file(data):
     # return [parse_row(row) for row in data.iterrrows()]
-    return data.apply(lambda x: parse_row(x['First']), axis=1)
+    return data.apply(lambda x: parse_row(x["First"]), axis=1)
+
 
 def map_message_type_to_message_type_id(func):
-    symbols = ['s', 'A', 'd', 'E', 'X', 'P', 'r', 'B', 'H', 'I', 'J']
+    symbols = ["s", "A", "d", "E", "X", "P", "r", "B", "H", "I", "J"]
     ids = list(range(0, 11))
     lut = dict(zip(symbols, ids))
+
     def wrapped_func(input):
         return lut[input]
-    
+
     return wrapped_func
+
 
 # @map_message_type_to_message_type_id
 def parse_row(row):
-    symbols = ['s', 'A', 'd', 'E', 'X', 'P', 'r', 'B', 'H', 'I', 'J']
+    symbols = ["s", "A", "d", "E", "X", "P", "r", "B", "H", "I", "J"]
     ids = list(range(0, 11))
     lut = dict(zip(symbols, ids))
     return {"timestamp": row[1:9], "message_type_id": lut[row[9:10]]}
-
 
