@@ -1,9 +1,10 @@
 import logging
-from flask_sqlalchemy import SQLAlchemy
 import datetime
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func, and_
 
 from app import db
-from app.models import Message
+from app.models import Message, MessageType
 
 
 # Setup logging
@@ -20,8 +21,39 @@ class PitchListRepo:
         pass
 
     def get_pitch_list(self):
-        pitch_list = Message.query.all()
-        return pitch_list
+        pitch_list = Message.query.join(MessageType.messages).values(Message.timestamp, Message.id, MessageType.description)
+
+        result = []
+        for timestamp, message_id, description in pitch_list:
+
+            result.append({
+                "message_id": message_id, 
+                "description": description, 
+                "timestamp": timestamp,
+            })
+
+        return result
+
+    def get_message_type_counts(self):
+
+        t = db.session.query(
+            Message.message_type_id,
+            func.count(Message.message_type_id).label('count'),
+        ).group_by(Message.message_type_id).subquery('t')
+
+        results = db.session.query(MessageType).join(MessageType.messages).values(MessageType.id, MessageType.description, t.c.count)
+
+        result = []
+
+        for message_type_id, description, count in set(results):
+
+            result.append({
+                "message_type": description,
+                "message_type_id": message_type_id, 
+                "count": count, 
+            })
+
+        return result
 
     def create_pitch_list(self, records):
         try:

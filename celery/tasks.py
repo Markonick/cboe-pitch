@@ -23,7 +23,7 @@ celery = Celery(broker=broker, backend=backend)
 # Add periodic tasks to scheduler
 @celery.on_after_configure.connect
 def add_periodic_task(sender, **kwargs):
-    sender.add_periodic_task(5.0, upload_pitch_data("input/"), name="Create new pitch data every 30 sec, if available")
+    sender.add_periodic_task(5.0, upload_pitch_data("input"), name="Create new pitch data every 30 sec, if available")
 
 
 @celery.task
@@ -33,6 +33,7 @@ def upload_pitch_data(file_path):
     # Check if file in data file is in expected input path location
     for pitch_data_file in glob.glob(file_path):
         raw_pitch_data = pd.read_csv(pitch_data_file, sep=" ", header=None)
+        logger.debug(f"raw_pitch_data: {raw_pitch_data}")
         parsed_pitch_data = parse_data_file(raw_pitch_data)
         os.remove(pitch_data_file)
 

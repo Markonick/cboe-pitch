@@ -24,12 +24,10 @@ class PitchList(Resource):
         # Get pitch data
         svc = create_pitch_list_service()
         pitch_list = svc.get_pitch_list()
-        body = []
 
-        for pitch_record in pitch_list:
-            record = {"message_type_id": pitch_record.message_type_id, "timestamp": pitch_record.timestamp}
-            body.append(record)
+        counts = svc.get_message_type_counts()
 
+        body = {"messages": pitch_list, "counts": counts}
         response = {"status": 200, "message": f"Found {len(pitch_list)} pitch records!", "body": body}
 
         return jsonify(response)

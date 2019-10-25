@@ -16,6 +16,9 @@ class PitchListService:
     def get_pitch_list(self):
         return self.repo.get_pitch_list()
 
+    def get_message_type_counts(self):
+        return self.repo.get_message_type_counts()
+
     def create_pitch_list(self, records):
         result = self.repo.create_pitch_list(records)
         return result
