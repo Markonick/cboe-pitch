@@ -17,24 +17,24 @@ class PitchListRepo:
     Repository for handling Pitch list
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, per_page=10):
+        self.per_page = per_page
 
     def get_pitch_list(self, page=1):
-        per_page = 100
         pitch_list = (
-            Message.query.join(MessageType.messages).order_by(Message.timestamp.desc())
+            Message.query.join(MessageType.messages)
+            .order_by(Message.timestamp.desc())
             .values(Message.timestamp, Message.id, MessageType.description)
-            # .paginate(page, per_page, error_out=False)
         )
 
         result = []
         for timestamp, message_id, description in pitch_list:
-
             result.append({"message_id": message_id, "description": description, "timestamp": timestamp})
-        offset = (page-1)*per_page
+
+        offset = (page - 1) * self.per_page
         start = offset
-        end = offset + per_page
+        end = offset + self.per_page
+
         return result[start:end]
 
     def get_message_type_counts(self):

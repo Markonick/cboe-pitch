@@ -1,3 +1,4 @@
 *.db
 postgres-data
 .env*
+.pytest_cache

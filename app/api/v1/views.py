@@ -22,10 +22,9 @@ class PitchList(Resource):
 
     def get(self):
         # Get page
-        # logger.debug(f'PAGE: {request.get_json()}')
-        page = request.args.get('page', default = 1, type = int)
-        logger.debug(f'PAGE: {page}')
-    
+        page = request.args.get("page", default=1, type=int)
+        logger.info(f"PAGE: {page}")
+
         # Instantiate service from factory
         svc = create_pitch_list_service()
         pitch_list = svc.get_pitch_list(page)

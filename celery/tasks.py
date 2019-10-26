@@ -27,7 +27,11 @@ celery = Celery(broker=broker, backend=backend)
 # Add periodic tasks to scheduler
 @celery.on_after_configure.connect
 def add_periodic_task(sender, **kwargs):
-    sender.add_periodic_task(10.0, upload_pitch_data, name="Create new pitch data every 30 sec, if available")
+    sender.add_periodic_task(
+        10.0,
+        upload_pitch_data,
+        name="Upload new pitch data file every 10 sec, if there is a file available in the path",
+    )
 
 
 @celery.task
@@ -35,6 +39,7 @@ def upload_pitch_data():
     """
     START RUNNING
     =============
+    find . -name "*.pyc" -exec rm -f {} \;
     sudo rm -rf migrations/
     docker exec -it backend flask db init
     docker exec -it backend flask db migrate
@@ -65,7 +70,6 @@ def upload_pitch_data():
 
 
 def parse_data_file(data):
-    # return [parse_row(row) for row in data.iterrrows()]
     return data.apply(lambda x: parse_row(x["First"]), axis=1)
 
 

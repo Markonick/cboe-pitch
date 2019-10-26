@@ -1,5 +1,5 @@
 # CBOE PITCH DATA API
-A simple Flask API with a Celery beat scheduler, dockerised
+A simple class-based Flask API (flask-restplus) with a Celery beat scheduler, dockerised.
 
 
 PREREQUISITES
@@ -23,6 +23,11 @@ Create a .env file in the root directory and add the following:
     SQLALCHEMY_TRACK_MODIFICATIONS=False
     CELERY_BROKER_URL=redis://redis:6379/0
     CELERY_RESULT_BACKEND=redis://redis:6379/0
+    DATABASE_URL=postgresql://postgres:admin@cboe-db:5432/pitch
+    POSTGRES_USER=postgres
+    POSTGRES_PASSWORD=admin
+    DATA_FILE=pitch_data.txt
+    PER_PAGE=50
 
 PIP
 ---
@@ -51,19 +56,19 @@ In order to run the celery tasks, we need to run 5 docker containers.
 
 i) Flask backend
 
-ii) Celery beat
+ii) Celery beat scheduler
 
 iii) Celery worker
 
-iv) Redis
+iv) Redis queue
 
-v) Flower (task monitor)
+v) Flower (Web based GUI task monitor)
 
 To start the app, do a
 
     docker-compose up --build
     
-This should kick-off all containers. You can observe the supported API endpoints at
+This should kick-off all containers. You can observe the supported API endpoints in Swagger at
 
     http://localhost:5000/
     
@@ -71,3 +76,8 @@ and the Flower monitor at
 
     http://127.0.0.1:5555/tasks
     
+
+Instructions
+------------
+
+![alt text](images/flower.png)
