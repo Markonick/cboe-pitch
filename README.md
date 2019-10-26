@@ -8,11 +8,6 @@ i) Docker
 
 ii) docker-compose
 
-iii) pipenv
-
-This solution can run in pipenv mode without celery/redis.
-
-
 ENVIRONMENT
 -----------
 
@@ -29,25 +24,6 @@ Create a .env file in the root directory and add the following:
     DATA_FILE=pitch_data.txt
     PER_PAGE=50
 
-PIP
----
-
-All you need to do is a
-
-    pipenv shell
-
-and then
-
-    pip install -r requirements.txt
-  
-this should create an cboe virtual environment to work within
-
-TESTING
--------
-
-To run the functional tests do
-
-    pytest -v
 
 FULL APP WITH CELERY BEAT
 -------------------------
@@ -64,9 +40,15 @@ iv) Redis queue
 
 v) Flower (Web based GUI task monitor)
 
-To start the app, do a
 
-    docker-compose up --build
+INSTRUCTIONS
+------------
+
+To start the web application, do a
+
+    docker-compose up --build 
+    
+in **cboe-pitch** at the folder app root.
     
 This should kick-off all containers. You can observe the supported API endpoints in Swagger at
 
@@ -74,33 +56,58 @@ This should kick-off all containers. You can observe the supported API endpoints
     
 ![alt text](images/swagger1.png)
 
-Eg. clciking on the GET methdo, we can execute a get list command:
+Eg. clicking on the GET method, we can execute a get list command:
 
 ![alt text](images/swagger2-post.png)
+
 and the Flower monitor at 
 
     http://127.0.0.1:5555/tasks
     
 ![alt text](images/flower.png)
 
-Instructions
-------------
+This is not all however. We first need to make a migration (through alembic / Flask-migrate).
 
-![alt text](images/cboe-website.png)
+Make sure there are no **migrations** folder already installed in the root app folder. If there is then do a 
+    sudo rm -rf migrations
+
+Now do the migrations:
+
+    docker exec -it backend flask db init
+    docker exec -it backend flask db migrate
+    docker exec -it backend flask db upgrade
+
+This creates the relations in our database so that we can now populate them with real data. 
+
+The app still doesn't do anything usefull, it will need the data file. The terminal should currently look something like this:
+
+
 ![alt text](images/term-no-tasks.png)
 
 
-sudo rm celery/pitch_data.txt
-cp pitch_data.txt celery
+To this end we will copy the **pitch data file** containg the stock orders in the celery folder, for the celery
+
+task to pick up and parse it. First of all, make sure no **pitch_data.txt** files already exist in the celery folder.
+
+If none, then let's copy the file, which will effectively kick off a task at the next 10 second scheduler beat:
+    
+    cp pitch_data.txt celery
+    
+We should see **20 HTTP POSTS** corresponding to 20 bulk uploads (**20000 rows/1000 per bulk upload**) and hopefully, their corresponding **200** HTTP responses:
 
 ![alt text](images/term-with-tasks.png)
 
-To run a virtualenv, use pipenv:
+The website runs on localhost and to get it up and running you will need 
+to run 
+    docker-compose up 
 
-    pipenv shell
+on the **cboe-react** folder.
 
-![alt text](images/pip-shell.png)
+![alt text](images/cboe-website.png)
 
-Then install requirements:
+TESTING
+-------
 
-    pip install -r requirements.txt
+To run the functional tests open a new terminal at the app root folder and run
+
+    docker exec -it backend pytest -v

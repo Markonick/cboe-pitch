@@ -1,7 +1,0 @@
-__pycache__
-postgres-data
-*.sql
-*.dump
-*.out
-.env*
-*.orig*

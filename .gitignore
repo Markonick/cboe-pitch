@@ -2,6 +2,13 @@
 __pycache__/
 *.py[cod]
 *$py.class
+__pycache__
+postgres-data
+*.sql
+*.dump
+*.out
+.env*
+*.orig*
 
 # C extensions
 *.so
