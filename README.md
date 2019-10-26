@@ -93,7 +93,7 @@ If none, then let's copy the file, which will effectively kick off a task at the
     
     cp pitch_data.txt celery
     
-We should see some **HTTP POSTS*** and several (**20**) **response 200**, hopefully:
+We should see **20 HTTP POSTS** corresponding to 20 bulk uploads (**20000 rows/1000 per bulk upload**) and hopefully, their corresponding **200** HTTP responses:
 
 ![alt text](images/term-with-tasks.png)
 
@@ -111,7 +111,3 @@ TESTING
 To run the functional tests open a new terminal at the app root folder and run
 
     docker exec -it backend pytest -v
-
-
-sudo rm celery/pitch_data.txt
-cp pitch_data.txt celery
