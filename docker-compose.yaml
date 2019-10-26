@@ -24,7 +24,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
   beat:
-    command: celery -A tasks beat --loglevel=debug
+    command: celery -A tasks beat --loglevel=info
     build:
       context: celery
       dockerfile: Dockerfile
@@ -38,7 +38,7 @@ services:
     volumes:
       - ./celery:/queue
   worker:
-    command: celery -A tasks worker --loglevel=debug
+    command: celery -A tasks worker --loglevel=info
     build:
       context: celery
       dockerfile: Dockerfile
