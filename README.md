@@ -28,17 +28,19 @@ Create a .env file in the root directory and add the following:
 FULL APP WITH CELERY BEAT
 -------------------------
 
-In order to run the celery tasks, we need to run 5 docker containers.
+In order to run the celery tasks, we need to run 6 docker containers.
 
 i) Flask backend
 
-ii) Celery beat scheduler
+ii) Postgres
 
-iii) Celery worker
+iii) Celery beat scheduler
 
-iv) Redis queue
+iv) Celery worker
 
-v) Flower (Web based GUI task monitor)
+v) Redis queue
+
+vi) Flower (Web based GUI task monitor)
 
 
 INSTRUCTIONS
