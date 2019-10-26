@@ -87,9 +87,9 @@ The app still doesn't do anything usefull, it will need the data file. The termi
 
 To this end we will copy the **pitch data file** containg the stock orders in the celery folder, for the celery
 
-task to pick it up and parse it. First of all make sure we do not have a **pitch_data.txt** file already in celery folder.
+task to pick up and parse it. First of all, make sure no **pitch_data.txt** files already exist in the celery folder.
 
-If this is ok, then let's copy the file, which will effectively kick off a task at the next 10 second scheduler beat:
+If none, then let's copy the file, which will effectively kick off a task at the next 10 second scheduler beat:
     
     cp pitch_data.txt celery
     
