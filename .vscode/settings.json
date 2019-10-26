@@ -1,3 +1,4 @@
 {
-    "editor.detectIndentation": false
+    "editor.detectIndentation": false,
+    "python.pythonPath": "/home/markonick/.local/share/virtualenvs/cboe-pitch-nwG5T-Uz/bin/python"
 }
