@@ -21,23 +21,24 @@ class PitchList(Resource):
     """
 
     def get(self):
-        # Get pitch data
+        # Get page
+        page = request.args.get("page")
+        logger.debug(f'PAGE: {page}')
+    
+        # Instantiate service from factory
         svc = create_pitch_list_service()
-        pitch_list = svc.get_pitch_list()
+        pitch_list = svc.get_pitch_list(page)
 
         counts = svc.get_message_type_counts()
 
-        body = {"messages": pitch_list, "counts": sorted(counts, key=lambda x: x['count'], reverse=True)}
+        body = {"messages": pitch_list, "counts": sorted(counts, key=lambda x: x["count"], reverse=True)}
         response = {"status": 200, "message": f"Found {len(pitch_list)} pitch records!", "body": body}
 
         return jsonify(response)
 
     def post(self):
-        # Read body fields
+        # Read body
         body = request.get_json()
-        # records = body["records"]
-        # message_type = body.get("message_type")
-        # logger.debug(f"RECORDS: {body}")
 
         # Instantiate service from factory
         svc = create_pitch_list_service()

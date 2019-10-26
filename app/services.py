@@ -13,8 +13,8 @@ class PitchListService:
     def __init__(self, repo):
         self.repo = repo
 
-    def get_pitch_list(self):
-        return self.repo.get_pitch_list()
+    def get_pitch_list(self, page=1):
+        return self.repo.get_pitch_list(page)
 
     def get_message_type_counts(self):
         return self.repo.get_message_type_counts()

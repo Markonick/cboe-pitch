@@ -20,17 +20,22 @@ class PitchListRepo:
     def __init__(self):
         pass
 
-    def get_pitch_list(self):
-        pitch_list = Message.query.join(MessageType.messages).values(
-            Message.timestamp, Message.id, MessageType.description
+    def get_pitch_list(self, page=1):
+        per_page = 100
+        pitch_list = (
+            Message.query.join(MessageType.messages).order_by(Message.timestamp.desc())
+            .values(Message.timestamp, Message.id, MessageType.description)
+            # .paginate(page, per_page, error_out=False)
         )
 
         result = []
         for timestamp, message_id, description in pitch_list:
 
             result.append({"message_id": message_id, "description": description, "timestamp": timestamp})
-
-        return result
+        offset = (page-1)*per_page
+        start = offset
+        end = offset + per_page
+        return result[start:end]
 
     def get_message_type_counts(self):
 
