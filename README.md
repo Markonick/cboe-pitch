@@ -58,7 +58,7 @@ This should kick-off all containers. You can observe the supported API endpoints
     
 ![alt text](images/swagger1.png)
 
-Eg. clicking on the GET method, we can execute a get list command:
+Eg. by clicking on the GET method, we can execute a get list command:
 
 ![alt text](images/swagger2-post.png)
 
