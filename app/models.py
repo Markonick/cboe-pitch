@@ -9,9 +9,11 @@ class MessageType(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(100), nullable=False, unique=False)
+    messages = db.relationship("Message", backref="message_type", lazy=True, cascade="all")
 
     def __init__(self, description=None):
         self.description = description
+
 
 class Message(db.Model):
     __tablename__ = "message"
@@ -19,7 +21,7 @@ class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     message_type_id = db.Column(db.Integer, db.ForeignKey("message_type.id"), nullable=False)
     timestamp = db.Column(db.String(100), nullable=False, unique=False)
-    message_type = relationship(MessageType, backref=backref('messages', uselist=True))
+    message_type = relationship(MessageType, backref=backref("messages", uselist=True))
 
     def __init__(self, message_type_id=None, timestamp=None):
         self.message_type_id = message_type_id

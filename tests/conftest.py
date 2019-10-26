@@ -4,7 +4,7 @@ from freezegun import freeze_time
 
 from app import create_app
 from app import db
-from app.models import Pitch
+from app.models import Message, MessageType
 
 
 @pytest.fixture(scope="function")
@@ -24,11 +24,15 @@ def init_database():
     db.create_all()
 
     # Insert user data
-    with freeze_time("2019-09-15 12:00:00"):
-        pitch1 = Pitch(username="nicomark", first_name="Nicolas", last_name="Markos", created=datetime.datetime.now())
-        pitch2 = Pitch(username="speedster", first_name="Efi", last_name="Pappa", created=datetime.datetime.now())
-    db.session.add(pitch1)
-    db.session.add(pitch2)
+    messageType1 = MessageType("MsgType1")
+    messageType2 = MessageType("MsgType2")
+    db.session.add(messageType1)
+    db.session.add(messageType2)
+    message1 = Message(messageType1.id, "12345678")
+    message2 = Message(messageType1.id, "12345688")
+    message3 = Message(messageType2.id, "12345698")
+    messageType1.messages.extend([message1, message2])
+    messageType2.messages.extend([message3])
 
     # Commit the changes for the users
     db.session.commit()
