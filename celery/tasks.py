@@ -37,36 +37,42 @@ def add_periodic_task(sender, **kwargs):
 @celery.task
 def upload_pitch_data():
     """
-    START RUNNING
-    =============
-    find . -name "*.pyc" -exec rm -f {} \;
-    sudo rm -rf migrations/
-    docker exec -it backend flask db init
-    docker exec -it backend flask db migrate
-    docker exec -it backend flask db upgrade
-    cp pitch_data.txt celery/
+    This task will run every 10 seconds to check if there is a new data file to process and upload
     """
-    # Check if file in data file is in expected input path location
-    path = pathlib.Path(datafile_path)
-    if not path.exists():
-        logger.debug(f"DATA FILE DOES NOT EXIST!!")
-        return
+    try:
+        # Check if file in data file is in expected input path location
+        path = pathlib.Path(fpath)
+        if not path.exists():
+            logger.debug(f"DATA FILE DOES NOT EXIST!!")
+            return
 
-    chunksize = 1000
-    for chunk in pd.read_csv(
-        datafile_path, chunksize=chunksize, delim_whitespace=True, header=None, names=["First", "Second"]
-    ):
-        parsed_pitch_data_df = parse_data_file(chunk)
+        chunksize = 1000
+        names = ["First", "Second"]
+
+        # Post chuns of 1000 rows to API endpoint
+        for chunk in pd.read_csv(fpath, chunksize=chunksize, delim_whitespace=True, header=None, names=names):
+            parsed_pitch_data_df = parse_data_file(chunk)
+            data = parsed_pitch_data_df.tolist()
+            response = post_data(data)
+            logger.debug(f"RESPONSE: ===============================")
+            logger.debug(f"RESPONSE: {response}")
+
+        # Remove file once finished
+        os.remove(datafile_path)
+    except Exception as exc:
+        logger.debug(f"UPLOAD PITCH DATA EXCEPTION: {exc}")
+
+
+def post_data(body):
+    """
+    POST data to pitch api endpoint
+    """
+    try:
         headers = {"Content-Type": "application/json"}
-        body = parsed_pitch_data_df.tolist()
-
         data_json = json.dumps(body)
-        response = requests.post(endpoint, data=data_json, headers=headers)
-        logger.debug(f"RESPONSE: ===============================")
-        logger.debug(f"RESPONSE: {response}")
-
-    # Remove file once finished
-    os.remove(datafile_path)
+        return requests.post(endpoint, data=data_json, headers=headers)
+    except OperationalError as exc:
+        raise self.retry(exc=exc)
 
 
 def parse_data_file(data):
@@ -78,4 +84,3 @@ def parse_row(row):
     ids = list(range(0, 11))
     lut = dict(zip(symbols, ids))
     return {"timestamp": row[1:9], "message_type_id": lut[row[9:10]]}
-

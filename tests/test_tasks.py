@@ -4,15 +4,19 @@ import json
 import datetime
 import logging
 from unittest.mock import Mock, patch
+from pytest import raises
+from celery.exceptions import Retry
+
+from celery.tasks import upload_pitch_data
 
 # Setup logging
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s")
-logger = logging.getLogger("TASKS TESTING")
+logger = logging.getLogger("CELERY TASKS TESTING")
 
 
-def test_get_response_returns_expected_pitch_data(client, init_database):
-    response = client.get("/api/v1/pitch/")
-    json_data = json.loads(response.data)
+@patch("requests.post")
+def test_pitch_data_upload_success(mock_post):
+    mock_post.return_value.ok = True
 
     assert len(json_data["body"]["messages"]) == 3
     assert json_data["body"]["messages"][0]["timestamp"] == "12345698"
@@ -23,7 +27,6 @@ def test_get_response_returns_expected_pitch_data(client, init_database):
 
     assert json_data["body"]["messages"][2]["timestamp"] == "12345678"
     assert json_data["body"]["messages"][2]["description"] == "MsgType1"
-
 
 
 def create_pitch_json():
