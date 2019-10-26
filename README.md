@@ -71,6 +71,7 @@ and the Flower monitor at
 This is not all however. The iamge above shows that indeed there were tasks scheduled but nothing really happened.We first need to make a migration (through alembic / Flask-migrate).
 
 Make sure there are no **migrations** folder already installed in the root app folder. If there is then do a 
+
     sudo rm -rf migrations
 
 Now do the migrations:
