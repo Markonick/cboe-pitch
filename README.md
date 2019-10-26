@@ -72,12 +72,25 @@ This should kick-off all containers. You can observe the supported API endpoints
 
     http://localhost:5000/
     
+![alt text](images/swagger1.png)
+
+Eg. clciking on the GET methdo, we can execute a get list command:
+
+![alt text](images/swagger2-post.png)
 and the Flower monitor at 
 
     http://127.0.0.1:5555/tasks
     
+![alt text](images/flower.png)
 
 Instructions
 ------------
 
-![alt text](images/flower.png)
+![alt text](images/cboe-website.png)
+![alt text](images/term-no-tasks.png)
+
+
+sudo rm celery/pitch_data.txt
+cp pitch_data.txt celery
+
+![alt text](images/term-with-tasks.png)
