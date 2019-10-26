@@ -73,18 +73,6 @@ def parse_data_file(data):
     return data.apply(lambda x: parse_row(x["First"]), axis=1)
 
 
-def map_message_type_to_message_type_id(func):
-    symbols = ["s", "A", "d", "E", "X", "P", "r", "B", "H", "I", "J"]
-    ids = list(range(0, 11))
-    lut = dict(zip(symbols, ids))
-
-    def wrapped_func(input):
-        return lut[input]
-
-    return wrapped_func
-
-
-# @map_message_type_to_message_type_id
 def parse_row(row):
     symbols = ["s", "A", "d", "E", "X", "P", "r", "B", "H", "I", "J"]
     ids = list(range(0, 11))
