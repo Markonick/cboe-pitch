@@ -94,3 +94,13 @@ sudo rm celery/pitch_data.txt
 cp pitch_data.txt celery
 
 ![alt text](images/term-with-tasks.png)
+
+To run a virtualenv, use pipenv:
+
+    pipenv shell
+
+![alt text](images/pip-shell.png)
+
+Then install requirements:
+
+    pip install -r requirements.txt
