@@ -28,17 +28,19 @@ Create a .env file in the root directory and add the following:
 FULL APP WITH CELERY BEAT
 -------------------------
 
-In order to run the celery tasks, we need to run 5 docker containers.
+In order to run the celery tasks, we need to run 6 docker containers.
 
 i) Flask backend
 
-ii) Celery beat scheduler
+ii) Postgres
 
-iii) Celery worker
+iii) Celery beat scheduler
 
-iv) Redis queue
+iv) Celery worker
 
-v) Flower (Web based GUI task monitor)
+v) Redis queue
+
+vi) Flower (Web based GUI task monitor)
 
 
 INSTRUCTIONS
@@ -56,7 +58,7 @@ This should kick-off all containers. You can observe the supported API endpoints
     
 ![alt text](images/swagger1.png)
 
-Eg. clicking on the GET method, we can execute a get list command:
+Eg. by clicking on the GET method, we can execute a get list command:
 
 ![alt text](images/swagger2-post.png)
 
@@ -66,9 +68,10 @@ and the Flower monitor at
     
 ![alt text](images/flower.png)
 
-This is not all however. We first need to make a migration (through alembic / Flask-migrate).
+This is not all however. The iamge above shows that indeed there were tasks scheduled but nothing really happened.We first need to make a migration (through alembic / Flask-migrate).
 
 Make sure there are no **migrations** folder already installed in the root app folder. If there is then do a 
+
     sudo rm -rf migrations
 
 Now do the migrations:
@@ -111,3 +114,39 @@ TESTING
 To run the functional tests open a new terminal at the app root folder and run
 
     docker exec -it backend pytest -v
+
+PITCH MESSAGE TYPES
+-------------------
+
+ID  |  DESCRIPTION
+----|-------------
+0	|  Symbol Clear
+1	|  Add Order (Short)
+2	|  Add Order (Long)
+3	|  Order Executed
+4	|  Order Cancel
+5	|  Trade (Short)
+6	|  Trade (Long)
+7	|  Trade Break
+8	|  Trading Status
+9	|  Auction Update
+10	|  Auction Summary
+
+
+DBEAVER
+-------
+
+You can easily inspect this simple database by setting up a db connection on DBeaver:
+
+![alt text](images/dbeaver-conne.png)
+
+or you can login to the postgres docker container via
+    docker exec -it cboe-pitch_cboe-db_1 bash
+
+then to enter postgres just type:
+    psql -U postgres
+    
+and you can now connect to pitch:
+    \c pitch
+
+and investigate tables and write normal db queries.
