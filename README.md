@@ -4,14 +4,16 @@ A simple class-based Flask API (flask-restplus) with a Celery beat scheduler, do
 
 PREREQUISITES
 -------------
-i) Docker
+* Docker
 
-ii) docker-compose
+* docker-compose
+
+* Ports 5000, 5433, 5555, 6379 free
 
 ENVIRONMENT
 -----------
 
-Create a .env file in the root directory and add the following:
+Create an **.env** file in the root directory and add the following:
 
     FLASK_APP=run.py
     PITCH_ENDPOINT=http://backend:5000/api/v1/pitch
@@ -30,17 +32,17 @@ FULL APP WITH CELERY BEAT
 
 In order to run the celery tasks, we need to run 6 docker containers.
 
-i) Flask backend
+1. Flask backend
 
-ii) Postgres
+2. Postgres
 
-iii) Celery beat scheduler
+3. Celery beat scheduler
 
-iv) Celery worker
+4. Celery worker
 
-v) Redis queue
+5. Redis queue
 
-vi) Flower (Web based GUI task monitor)
+6. Flower (Web based GUI task monitor)
 
 
 INSTRUCTIONS
@@ -54,7 +56,7 @@ in **cboe-pitch** at the folder app root.
     
 This should kick-off all containers. You can observe the supported API endpoints in Swagger at
 
-    http://localhost:5000/
+    (http://localhost:5000/)
     
 ![alt text](images/swagger1.png)
 
@@ -64,13 +66,13 @@ Eg. by clicking on the GET method, we can execute a get list command:
 
 and the Flower monitor at 
 
-    http://127.0.0.1:5555/tasks
+    (http://127.0.0.1:5555/tasks)
     
 ![alt text](images/flower.png)
 
-This is not all however. The iamge above shows that indeed there were tasks scheduled but nothing really happened.We first need to make a migration (through alembic / Flask-migrate).
+This is not all however. The image above shows that indeed there were tasks scheduled but nothing really happened. We first need to make a migration (through alembic / Flask-migrate).
 
-Make sure there are no **migrations** folder already installed in the root app folder. If there is then do a 
+Make sure there are no **migrations** folder already installed in the root app folder. If there is then remove it: 
 
     sudo rm -rf migrations
 
@@ -100,11 +102,11 @@ We should see **20 HTTP POSTS** corresponding to 20 bulk uploads (**20000 rows/1
 
 ![alt text](images/term-with-tasks.png)
 
-The website runs on localhost and to get it up and running you will need 
-to run 
-    docker-compose up 
+The website runs on (http://localhost) and to get it up and running you will need 
+to run a simple 
+    docker-compose up
 
-on the **cboe-react** folder.
+on the **cboe-react** repo.
 
 ![alt text](images/cboe-website.png)
 
