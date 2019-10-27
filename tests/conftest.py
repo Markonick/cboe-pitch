@@ -1,6 +1,5 @@
 import pytest
 import datetime
-from freezegun import freeze_time
 
 from app import create_app
 from app import db

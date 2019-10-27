@@ -5,7 +5,6 @@ import datetime
 import logging
 from unittest.mock import Mock, patch
 from pytest import raises
-from celery.exceptions import Retry
 
 from celery.tasks import upload_pitch_data, parse_row, parse_data_file, post_data, add_periodic_task
 
@@ -16,17 +15,16 @@ logger = logging.getLogger("CELERY TASKS TESTING")
 
 @patch("requests.post")
 def test_pitch_data_upload_success(mock_post):
-    mock_post.return_value.ok = True
+    pass
 
-    assert len(json_data["body"]["messages"]) == 3
-    assert json_data["body"]["messages"][0]["timestamp"] == "12345698"
-    assert json_data["body"]["messages"][0]["description"] == "MsgType2"
 
-    assert json_data["body"]["messages"][1]["timestamp"] == "12345688"
-    assert json_data["body"]["messages"][1]["description"] == "MsgType1"
+def test_parse_row_returns_expected_result():
+    row = "S28800011AAK27GA0000DTS000100SH"
 
-    assert json_data["body"]["messages"][2]["timestamp"] == "12345678"
-    assert json_data["body"]["messages"][2]["description"] == "MsgType1"
+    output = parse_row(row)
+
+    assert output["timestamp"] == "28800011"
+    assert output["message_type_id"] == 0
 
 
 def create_pitch_json():
@@ -37,8 +35,3 @@ def create_pitch_json():
     ]
 
     return body
-
-
-def test_parse_row_returns_expected_result():
-    row = ""
-
