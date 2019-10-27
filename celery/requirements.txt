@@ -5,4 +5,3 @@ flower
 kombu==4.5.0
 pytest
 pandas
-grip

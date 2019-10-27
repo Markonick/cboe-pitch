@@ -8,3 +8,4 @@ python-dotenv==0.10.3
 Flask-Migrate==2.5.2
 psycopg2
 pandas
+grip
