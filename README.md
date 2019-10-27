@@ -138,7 +138,7 @@ DBEAVER
 
 You can easily inspect this simple database by setting up a db connection on DBeaver:
 
-![alt text](images/dbeaver-conne.png)
+![alt text](images/dbeaver-conn.png)
 
 or you can login to the postgres docker container via
     docker exec -it cboe-pitch_cboe-db_1 bash
