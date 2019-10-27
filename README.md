@@ -1,5 +1,14 @@
-# CBOE PITCH DATA API
+# CBOE WEB APPLICATION
 A simple class-based Flask API (flask-restplus) with a Celery beat scheduler, dockerised.
+
+It is made from two parts, a Flask backend and a React Frontend.
+
+The Flask backend can be found in this current repo:
+    (https://github.com/Markonick/cboe-pitch)
+
+
+The React frontend can be found here:
+    (https://github.com/Markonick/cboe-react)
 
 
 Prerequisites
@@ -27,8 +36,8 @@ Create an **.env** file in the root directory and add the following:
     PER_PAGE=50
 
 
-Docker Containers
------------------
+Backend Docker Containers
+-------------------------
 
 In order to run the celery tasks, we need to run 6 docker containers.
 
@@ -44,17 +53,34 @@ In order to run the celery tasks, we need to run 6 docker containers.
 
 6. Flower (Web based GUI task monitor)
 
+Frontend Docker Containers
+-------------------------
+1. React/Nginx 
 
 Instructions
 ------------
+To start the frontend container served on nginx on port 80 (for the purposes of this app we did not use HTTPS), just 
 
-To start the web application, do a
+go to the folder where you git cloned or copied **cboe-react** and do a 
+
+    docker-compose up --build
+
+To start the backend flask application, similarly do a
 
     docker-compose up --build
     
 in **cboe-pitch** at the folder app root.
     
-This should kick-off all containers. You can observe the supported API endpoints in Swagger at
+This should kick-off all containers. 
+
+Navigate to the website:
+    (http://localhost)
+    
+![alt text](images/empty_website.png)
+    
+You should see a website, but no data, since we haven't loaded any the data file yet.
+
+You can observe the supported API endpoints in Swagger at
 
     (http://localhost:5000/)
     
@@ -152,3 +178,33 @@ and you can now connect to pitch:
     \c pitch
 
 and investigate tables and write normal db queries.
+
+Miscellaneous
+-------------
+
+If for any reason we are in a unsure state, its always better to just build everything from scratch.
+
+If you want to really build everything from scratch that means even deleting docker image caches and dangling images.
+
+Stop the containers:
+
+    docker-compose stop
+
+Stop containers not already stopped and remove containers, networks, volumes, and images created by up:
+
+    docker-compose down
+    
+Prunes images, containers, and networks:
+    
+    docker system prune
+    
+Use --volumes flag to remove dangling volumes (especially to avoid running out of disk space)
+    
+If for any reason you get a permission error like this in between builds and test runs:
+
+    PermissionError: [Errno 13] Permission denied: '/home/markonick/Projects/cboe-pitch/tests/__pycache__/conftest.cpython-37-pytest-5.2.2.pyc'
+    
+just run a
+    
+    sudo find . -name "*.pyc" -exec rm -f {} \;
+
