@@ -152,3 +152,25 @@ and you can now connect to pitch:
     \c pitch
 
 and investigate tables and write normal db queries.
+
+Miscellaneous
+-------------
+
+If for any reason we are in a unsure state, its always better to just build everything from scratch.
+
+If you want to really build everything from scratch that means even deleting docker image caches and dangling images.
+
+Stop the containers:
+
+    docker-compose stop
+
+Stop containers not already stopped and remove containers, networks, volumes, and images created by up:
+
+    docker-compose down
+    
+Prunes images, containers, and networks:
+    
+    docker system prune
+    
+Use --volumes flag to remove dangling volumes (especially to avoid running out of disk space)
+    
