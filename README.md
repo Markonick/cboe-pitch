@@ -78,7 +78,7 @@ Navigate to the website:
     
 ![alt text](images/empty_website.png)
     
-You should see a website, but no data, since we haven't loaded any the data file yet.
+You should see a website, but no data, since we haven't uploaded the data file yet.
 
 You can observe the supported API endpoints in Swagger at
 
