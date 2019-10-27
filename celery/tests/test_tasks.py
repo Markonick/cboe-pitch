@@ -3,6 +3,7 @@ import os
 import json
 import datetime
 import logging
+import pandas as pd
 from unittest.mock import Mock, patch
 from pytest import raises
 

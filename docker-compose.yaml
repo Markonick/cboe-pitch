@@ -37,7 +37,7 @@ services:
     depends_on:
       - redis
     volumes:
-      - ./celery:/queue
+      - ./celery/:/queue
   worker:
     command: celery -A tasks worker --loglevel=info
     build:
@@ -52,7 +52,7 @@ services:
     depends_on:
       - redis
     volumes:
-      - ./celery:/queue
+      - ./celery/:/queue
   monitor:
     build:
       context: celery

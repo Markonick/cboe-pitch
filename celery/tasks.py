@@ -60,7 +60,9 @@ def upload_pitch_data():
         logger.debug(f"UPLOAD PITCH DATA EXCEPTION: {exc}")
     finally:
         # Clean up, remove data file
-        os.remove(fpath)
+        path = pathlib.Path(fpath)
+        if path.exists():
+            os.remove(fpath)
 
 
 def post_data(body):
