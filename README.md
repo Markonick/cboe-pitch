@@ -4,9 +4,9 @@ A simple class-based Flask API (flask-restplus) with a Celery beat scheduler, do
 
 PREREQUISITES
 -------------
-* Docker
+* Docker (https://docs.docker.com/install/)
 
-* docker-compose
+* docker-compose (https://docs.docker.com/compose/install/)
 
 * Ports 5000, 5433, 5555, 6379 free
 
