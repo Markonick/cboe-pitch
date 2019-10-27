@@ -180,5 +180,5 @@ If for any reason you get a permission error like this in between builds and tes
     
 just run a
     
-    sudo rm -rf tests/.pytest_cache/
+    sudo find . -name "*.pyc" -exec rm -f {} \;
 
