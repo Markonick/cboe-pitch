@@ -174,3 +174,11 @@ Prunes images, containers, and networks:
     
 Use --volumes flag to remove dangling volumes (especially to avoid running out of disk space)
     
+If for any reason you get a permission error like this in between builds and test runs:
+
+    PermissionError: [Errno 13] Permission denied: '/home/markonick/Projects/cboe-pitch/tests/__pycache__/conftest.cpython-37-pytest-5.2.2.pyc'
+    
+just run a
+    
+    sudo rm -rf tests/.pytest_cache/
+
