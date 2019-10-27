@@ -2,7 +2,7 @@
 A simple class-based Flask API (flask-restplus) with a Celery beat scheduler, dockerised.
 
 
-PREREQUISITES
+Prerequisites
 -------------
 * Docker (https://docs.docker.com/install/)
 
@@ -10,8 +10,8 @@ PREREQUISITES
 
 * Ports 5000, 5433, 5555, 6379 free
 
-ENVIRONMENT
------------
+Environment Variables
+---------------------
 
 Create an **.env** file in the root directory and add the following:
 
@@ -27,8 +27,8 @@ Create an **.env** file in the root directory and add the following:
     PER_PAGE=50
 
 
-FULL APP WITH CELERY BEAT
--------------------------
+Docker Containers
+-----------------
 
 In order to run the celery tasks, we need to run 6 docker containers.
 
@@ -45,7 +45,7 @@ In order to run the celery tasks, we need to run 6 docker containers.
 6. Flower (Web based GUI task monitor)
 
 
-INSTRUCTIONS
+Instructions
 ------------
 
 To start the web application, do a
@@ -110,14 +110,14 @@ on the **cboe-react** repo.
 
 ![alt text](images/cboe-website.png)
 
-TESTING
+Testing
 -------
 
 To run the functional tests open a new terminal at the app root folder and run
 
     docker exec -it backend pytest -v
 
-PITCH MESSAGE TYPES
+Pitch Message Types
 -------------------
 
 ID  |  DESCRIPTION
@@ -135,7 +135,7 @@ ID  |  DESCRIPTION
 10	|  Auction Summary
 
 
-DBEAVER
+DBeaver
 -------
 
 You can easily inspect this simple database by setting up a db connection on DBeaver:
