@@ -50,7 +50,7 @@ INSTRUCTIONS
 
 To start the web application, do a
 
-    docker-compose up --build 
+    docker-compose up --build
     
 in **cboe-pitch** at the folder app root.
     
