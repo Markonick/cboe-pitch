@@ -1,5 +1,14 @@
-# CBOE PITCH DATA API
+# CBOE WEB APPLICATION
 A simple class-based Flask API (flask-restplus) with a Celery beat scheduler, dockerised.
+
+It is made from two parts, a Flask backend and a React Frontend.
+
+The Flask backend can be found in this current repo:
+    (https://github.com/Markonick/cboe-pitch)
+
+
+The React frontend can be found here:
+    (https://github.com/Markonick/cboe-react)
 
 
 Prerequisites
@@ -27,8 +36,8 @@ Create an **.env** file in the root directory and add the following:
     PER_PAGE=50
 
 
-Docker Containers
------------------
+Backend Docker Containers
+-------------------------
 
 In order to run the celery tasks, we need to run 6 docker containers.
 
@@ -44,17 +53,34 @@ In order to run the celery tasks, we need to run 6 docker containers.
 
 6. Flower (Web based GUI task monitor)
 
+Frontend Docker Containers
+-------------------------
+1. React/Nginx 
 
 Instructions
 ------------
+To start the frontend container served on nginx on port 80 (for the purposes of this app we did not use HTTPS), just 
 
-To start the web application, do a
+go to the folder where you git cloned or copied **cboe-react** and do a 
+
+    docker-compose up --build
+
+To start the backend flask application, similarly do a
 
     docker-compose up --build
     
 in **cboe-pitch** at the folder app root.
     
-This should kick-off all containers. You can observe the supported API endpoints in Swagger at
+This should kick-off all containers. 
+
+Navigate to the website:
+    (http://localhost)
+    
+![alt text](images/empty_website.png)
+    
+You should see a website, but no data, since we haven't loaded any the data file yet.
+
+You can observe the supported API endpoints in Swagger at
 
     (http://localhost:5000/)
     
