@@ -51,7 +51,7 @@ class PitchListRepo:
 
             result.append({"message_type": description, "count": count})
 
-        return result
+        return sorted(result, key=lambda x: x["count"], reverse=True)
 
     def create_pitch_list(self, records):
         try:

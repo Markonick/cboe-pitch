@@ -10,6 +10,8 @@ import pandas as pd
 from celery import Celery
 import pathlib
 
+from app.services import PitchListService
+
 # Setup logging
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s")
 logger = logging.getLogger("CELERY-TASKS")
@@ -23,7 +25,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 fpath = os.path.join(basedir, datafile)
 
 celery = Celery(broker=broker, backend=backend)
-
+pitch_list_svc = PitchListService()
 # Add periodic tasks to scheduler
 @celery.on_after_configure.connect
 def add_periodic_task(sender, **kwargs):
