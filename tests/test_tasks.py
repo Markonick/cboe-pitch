@@ -7,7 +7,7 @@ from unittest.mock import Mock, patch
 from pytest import raises
 from celery.exceptions import Retry
 
-from celery.tasks import upload_pitch_data
+from celery.tasks import upload_pitch_data, parse_row, parse_data_file, post_data, add_periodic_task
 
 # Setup logging
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s")
@@ -37,3 +37,8 @@ def create_pitch_json():
     ]
 
     return body
+
+
+def test_parse_row_returns_expected_result():
+    row = ""
+

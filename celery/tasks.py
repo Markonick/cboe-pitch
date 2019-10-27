@@ -20,7 +20,7 @@ broker = os.environ.get("CELERY_BROKER_URL")
 backend = os.environ.get("CELERY_RESULT_BACKEND")
 datafile = os.environ.get("DATA_FILE")
 basedir = os.path.abspath(os.path.dirname(__file__))
-datafile_path = os.path.join(basedir, datafile)
+fpath = os.path.join(basedir, datafile)
 
 celery = Celery(broker=broker, backend=backend)
 
@@ -49,18 +49,18 @@ def upload_pitch_data():
         chunksize = 1000
         names = ["First", "Second"]
 
-        # Post chuns of 1000 rows to API endpoint
+        # Post chunks of 1000 rows to API endpoint
         for chunk in pd.read_csv(fpath, chunksize=chunksize, delim_whitespace=True, header=None, names=names):
+            # Parse data file
             parsed_pitch_data_df = parse_data_file(chunk)
             data = parsed_pitch_data_df.tolist()
-            response = post_data(data)
-            logger.debug(f"RESPONSE: ===============================")
-            logger.debug(f"RESPONSE: {response}")
 
-        # Remove file once finished
-        os.remove(datafile_path)
+            response = post_data(data)  # Call post
     except Exception as exc:
         logger.debug(f"UPLOAD PITCH DATA EXCEPTION: {exc}")
+    finally:
+        # Clean up, remove data file
+        os.remove(fpath)
 
 
 def post_data(body):
@@ -72,7 +72,7 @@ def post_data(body):
         data_json = json.dumps(body)
         return requests.post(endpoint, data=data_json, headers=headers)
     except OperationalError as exc:
-        raise self.retry(exc=exc)
+        raise self.retry(exc=exc)  # exponential backoff
 
 
 def parse_data_file(data):
