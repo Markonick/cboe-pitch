@@ -172,9 +172,11 @@ or you can login to the postgres docker container via
     docker exec -it cboe-pitch_cboe-db_1 bash
 
 then to enter postgres just type:
+
     psql -U postgres
     
 and you can now connect to pitch:
+
     \c pitch
 
 and investigate tables and write normal db queries.
