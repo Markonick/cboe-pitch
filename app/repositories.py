@@ -39,10 +39,12 @@ class PitchListRepo:
 
     def get_message_type_counts(self):
 
-        t = db.session.query(MessageType).join(MessageType.messages).subquery("t")
+        # t = db.session.query(MessageType).join(MessageType.messages).subquery("t")
 
-        results = db.session.query(t.c.description, func.count(t.c.description).label("count")).group_by(
-            t.c.description
+        results = (
+            db.session.query(Message.message_type_id, func.count(Message.message_type_id).label("count"))
+            .join(MessageType.messages)
+            .group_by(Message.message_type_id)
         )
 
         result = []
