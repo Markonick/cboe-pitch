@@ -13,6 +13,7 @@ logger = logging.getLogger("API")
 
 api = Namespace("pitch", description="CBOE pitch data related operations")
 
+page_cache = {}
 
 @api.route("/pitch", strict_slashes=False)
 class PitchList(Resource):
@@ -27,11 +28,21 @@ class PitchList(Resource):
 
         # Instantiate service from factory
         svc = create_pitch_list_service()
-        pitch_list = svc.get_pitch_list(page)
 
+        if page in page_cache:
+            pitch_list = page_cache[page]
+            logger.debug(f"CACHED PAGE: {page}, TRUE")
+        else:
+            pitch_list = svc.get_pitch_list(page)
+            logger.debug(f"CACHED PAGE: {page}, FALSE")
+            page_cache[page] = pitch_list
+        
+        # Get count per message type
         counts = svc.get_message_type_counts()
+        # Get total count of messages in message table
+        totalCount = svc.get_total_count()
 
-        body = {"messages": pitch_list, "counts": sorted(counts, key=lambda x: x["count"], reverse=True)}
+        body = {"totalCount": totalCount, "messages": pitch_list, "counts": sorted(counts, key=lambda x: x["count"], reverse=True)}
         response = {"status": 200, "message": f"Found {len(pitch_list)} pitch records!", "body": body}
 
         return jsonify(response)
@@ -44,8 +55,8 @@ class PitchList(Resource):
         svc = create_pitch_list_service()
 
         # Create pitch list
-        data = [{"timestamp": record["timestamp"], "message_type_id": record["message_type_id"]} for record in body]
-
+        data = [{"timestamp": record["timestamp"], "message_type_id": record["message_type_id"]} for record in body[0]]
+        logger.debug(f'TOTAL LINES: {body[1]}')
         result = svc.create_pitch_list(data)
         logger.debug(f"{result}")
 

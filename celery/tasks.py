@@ -46,7 +46,7 @@ def upload_pitch_data():
             logger.debug(f"DATA FILE DOES NOT EXIST!!")
             return
 
-        chunksize = 1000
+        chunksize = 10000
         names = ["First", "Second"]
 
         # Post chunks of 1000 rows to API endpoint
@@ -54,8 +54,8 @@ def upload_pitch_data():
             # Parse data file
             parsed_pitch_data_df = parse_data_file(chunk)
             data = parsed_pitch_data_df.tolist()
-
-            response = post_data(data)  # Call post
+            number_lines = sum(1 for line in open(fpath))
+            response = post_data((data, number_lines))  # Call post
     except Exception as exc:
         logger.debug(f"UPLOAD PITCH DATA EXCEPTION: {exc}")
     finally:
