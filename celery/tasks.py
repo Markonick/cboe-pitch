@@ -28,7 +28,7 @@ celery = Celery(broker=broker, backend=backend)
 @celery.on_after_configure.connect
 def add_periodic_task(sender, **kwargs):
     sender.add_periodic_task(
-        10.0,
+        600.0,
         upload_pitch_data,
         name="Upload new pitch data file every 10 sec, if there is a file available in the path",
     )

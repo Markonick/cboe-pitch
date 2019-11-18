@@ -39,10 +39,12 @@ class PitchList(Resource):
         
         # Get count per message type
         counts = svc.get_message_type_counts()
+        # Get current count of messages in message table
+        current_count = svc.get_current_count()
         # Get total count of messages in message table
-        totalCount = svc.get_total_count()
+        total_count = svc.get_total_count()
 
-        body = {"totalCount": totalCount, "messages": pitch_list, "counts": sorted(counts, key=lambda x: x["count"], reverse=True)}
+        body = {"totalCount": total_count, "currentCount": current_count, "messages": pitch_list, "counts": sorted(counts, key=lambda x: x["count"], reverse=True)}
         response = {"status": 200, "message": f"Found {len(pitch_list)} pitch records!", "body": body}
 
         return jsonify(response)
@@ -56,7 +58,9 @@ class PitchList(Resource):
 
         # Create pitch list
         data = [{"timestamp": record["timestamp"], "message_type_id": record["message_type_id"]} for record in body[0]]
-        logger.debug(f'TOTAL LINES: {body[1]}')
+        
+        logger.debug(f'TOTAL LINES: {body[1]} {type(body[1])}')
+        count_result = svc.create_total_count(body[1])
         result = svc.create_pitch_list(data)
         logger.debug(f"{result}")
 

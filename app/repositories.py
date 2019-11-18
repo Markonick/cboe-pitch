@@ -71,10 +71,20 @@ class PitchListRepo:
         # return result[start:end]
         return result
 
-    def get_total_count(self):
+    def get_current_count(self):
         with get_connection('public') as db_conn:
             with db_conn.cursor() as cur:
                 query = "SELECT count(*) from message"
+                cur.execute(query)
+
+                current_count = cur.fetchone() 
+
+        return current_count
+
+    def get_total_count(self):
+        with get_connection('public') as db_conn:
+            with db_conn.cursor() as cur:
+                query = "SELECT total from message_metadata"
                 cur.execute(query)
 
                 total_count = cur.fetchone() 
@@ -91,16 +101,16 @@ class PitchListRepo:
         with get_connection('public') as db_conn:
             with db_conn.cursor() as cur:
                 query = f"""
-                WITH counts as (
-                    SELECT message_type_id, count(message_type_id) 
-                    AS count 
-                    FROM message
-                    GROUP BY message_type_id
-                )
-                SELECT description, count 
-                FROM counts 
-                JOIN message_type
-                ON message_type_id = message_type.id
+                    WITH counts as (
+                        SELECT message_type_id, count(message_type_id) 
+                        AS count 
+                        FROM message
+                        GROUP BY message_type_id
+                    )
+                    SELECT description, count 
+                    FROM counts 
+                    JOIN message_type
+                    ON message_type_id = message_type.id
                 """
                 cur.execute(query)
 
@@ -112,6 +122,15 @@ class PitchListRepo:
 
         # return sorted(result, key=lambda x: x["count"], reverse=True)
         return result
+
+    def create_total_count(self, total):
+        with get_connection('public') as db_conn:
+            with db_conn.cursor() as cur:
+                query = f"""
+                    INSERT INTO message_metadata (total)
+                    VALUES ({total})
+                """
+                cur.execute(query)
 
     def create_pitch_list(self, records):
         try:

@@ -6,6 +6,11 @@ CREATE TABLE message_type (
   description TEXT
 );
 
+CREATE TABLE message_metadata (
+  id SERIAL PRIMARY KEY NOT NULL,
+  total INT
+);
+
 INSERT INTO message_type (id, description) VALUES 
 (0, 'Symbol Clear'), 
 (1, 'Add Order (Short)'), 

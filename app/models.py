@@ -27,3 +27,12 @@ class Message(db.Model):
         self.message_type_id = message_type_id
         self.timestamp = timestamp
 
+
+class MessageMetadata(db.Model):
+    __tablename__ = "message_metadata"
+
+    id = db.Column(db.Integer, primary_key=True)
+    total = db.Column(db.Integer)
+
+    def __init__(self, total=None):
+        self.total = total
